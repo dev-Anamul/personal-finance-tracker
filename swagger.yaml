@@ -1,0 +1,1798 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Personal Finance Tracker Application
+  description: This REST API build for tracking personal financial transaction. Here user can able to add their income and expenses. They can also able to their expense trends and income trend. User will able to create their budget and also set their goals.
+  contact:
+    name: Anamul Haque
+    email: anamuljibon522@gmail.com
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: dev
+    url: http://localhost:5455/api/v1
+  - description: Production
+    url: https:example.com/api/v1
+tags:
+  - name: Auth
+    description: Authentication endpoints
+  - name: Transaction
+    description: Transaction endpoint (private)
+  - name: Budget
+    description: Budget endpoints (private)
+  - name: Category
+    description: Category endpoints (private)
+  - name: Goal
+    description: Goal endpoints (private)
+paths:
+  "/auth/signup":
+    post:
+      tags: [Auth]
+      description: this endpoint for user registration
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  example: Jhon
+                lastName:
+                  type: string
+                  example: Doe
+                email:
+                  type: string
+                  format: email
+                  example: example@gmail.com
+                password:
+                  type: string
+                  minLength: 8
+                  example: 12345678
+              required: [firstName, lastName, email, password]
+
+      responses:
+        "201":
+          description: Signup successful
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 201
+                  message:
+                    type: string
+                    example: signup successful
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: /auth/signup
+                      login:
+                        type: string
+                        example: /auth/login
+        "400":
+          $ref: "#/components/responses/400"
+        "500":
+          $ref: "#/components/responses/500"
+  "/auth/login":
+    post:
+      description: user login
+      tags: [Auth]
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: example@gmail.com
+                password:
+                  type: string
+                  example: 12fft&^%*
+              required: [email, password]
+      responses:
+        "200":
+          description: Login successful
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: login successful
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        "400":
+          $ref: "#/components/responses/400"
+        "500":
+          $ref: "#/components/responses/500"
+  "/auth/update-password":
+    patch:
+      description: Update login user password
+      security:
+        - bearerAuth: []
+      tags: [Auth]
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                currentPassword:
+                  type: string
+                  example: 235fefdf*&^&*
+                  minLength: 8
+                newPassword:
+                  type: string
+                  minLength: 8
+                  example: tfe*^%123
+                confirmPassword:
+                  type: string
+                  example: 45rwef*&^&
+              required: [currentPassword, newPassword, confirmPassword]
+      responses:
+        "200":
+          description: This endpoints for updating login user's password
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: Password updated successfully
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+  "/auth/update-profile":
+    patch:
+      security:
+        - bearerAuth: []
+      description: update login user's information except password
+      tags: [Auth]
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  example: Jhon
+                lastName:
+                  type: string
+                  example: Doe
+                email:
+                  type: string
+                  format: email
+                  example: example@gmail.com
+      responses:
+        "200":
+          description: This endpoints for updating login user's information except password
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+  "/auth/profile":
+    get:
+      description: Get login user's information
+      security:
+        - bearerAuth: []
+      tags: [Auth]
+      responses:
+        "200":
+          description: Get
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: successfull
+                  data:
+                    $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+  "/auth/delete-account":
+    delete:
+      description: Delete login user's account
+      security:
+        - bearerAuth: []
+      tags: [Auth]
+      responses:
+        "204":
+          description: Delete login user's account
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 204
+                  message:
+                    type: string
+                    example: User accounts deleted successfully
+
+  # transaction
+  "/transactions":
+    get:
+      description: This endpoints for getting all transactions
+      tags: [Transaction]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/sortTypeParam"
+        - $ref: "#/components/parameters/sortByParam"
+        - $ref: "#/components/parameters/searchTermParam"
+        - $ref: "#/components/parameters/transactionTypeParam"
+        - $ref: "#/components/parameters/expandParam"
+        - $ref: "#/components/parameters/selectParam"
+      responses:
+        "200":
+          description: Get transactions successfully
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+    post:
+      description: This endpoints for adding new transaction
+      tags: [Transaction]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Home rent
+                description:
+                  type: string
+                  example: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+                amount:
+                  type: integer
+                  format: int32
+                  example: 6700
+                date:
+                  type: string
+                  format: date-time
+                  example: "2023-09-14T19:01:14.785Z"
+                type:
+                  type: string
+                  enum: [income, expense]
+                  example: expense
+                categoryId:
+                  type: string
+                  example: "507f1f77bcf86cd799439011"
+      responses:
+        "201":
+          description: Transaction created successfully
+          content:
+            "application/json":
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Transaction"
+                  - type: object
+                    properties:
+                      links:
+                        type: object
+                        properties:
+                          self:
+                            type: string
+                            format: url
+                            example: "/transaction/507f1f77bcf86cd799439011"
+                          all_transactions:
+                            type: string
+                            format: url
+                            example: /transactions
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+  "/transactions/{id}":
+    get:
+      description: This endpoints for geting single transaction based on id
+      tags: [Transaction]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      responses:
+        "200":
+          description: Get single transaction successfully
+          content:
+            "application/json":
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Transaction"
+                  - type: object
+                    properties:
+                      links:
+                        type: object
+                        properties:
+                          self:
+                            type: string
+                            format: url
+                            example: "/transactions/507f1f77bcf86cd799439011"
+                          all_transaction:
+                            type: string
+                            format: url
+                            example: "/transactions"
+                          transactions_by_category:
+                            type: string
+                            format: url
+                            example: "/category/507f1f77bcf86cd799439011/transaction"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+    put:
+      description: This endpoints for updating a transactions
+      tags: [Transaction]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "64d268cdeef8c84bb18912db"
+                title:
+                  type: string
+                  example: Home rent
+                description:
+                  type: string
+                  example: "Lorem Ipsum is simply dummy text of the printing and typesetting industry"
+                amount:
+                  type: integer
+                  format: int32
+                  example: 5400
+                date:
+                  type: string
+                  format: date-time
+                  example: "2023-09-14T19:01:14.785Z"
+                transactionType:
+                  type: string
+                  enum: [income, expense]
+                  example: expense
+                categoryId:
+                  type: string
+                  example: "64d268cdeef8c84bb18912db"
+      responses:
+        "200":
+          description: This endpoint fomr updating
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/UpdateTransactionDto"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+    delete:
+      description: This endpoints for deleting login user's account
+      tags: [Transaction]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      responses:
+        "204":
+          description: Account deleted successfuly
+          content:
+            "applicaiton/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 204
+                  message:
+                    type: string
+                    example: Account's deleted successfully
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+  "/transactions/expense-trends":
+    get:
+      description: This endpoints for getting expense trends of users
+      tags: [Transaction]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/startParam"
+        - $ref: "#/components/parameters/endParam"
+        - $ref: "#/components/parameters/frequency"
+      responses:
+        "200":
+          description: Get expense trends successfully
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    totalAmount:
+                      type: integer
+                      format: int32
+                      example: 5400
+                    requency:
+                      type: string
+                      enum: [weekly, monthly, yearly]
+                      example: monthly
+                    date:
+                      type: string
+                      enum: ["Jan, 2023", "week-1", "2023"]
+                      example: "Jan, 2023"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+  "/transactions/income-trends":
+    get:
+      description: This endpoints for getting income trends for a particular period
+      tags: [Transaction]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/startParam"
+        - $ref: "#/components/parameters/endParam"
+        - $ref: "#/components/parameters/frequency"
+      responses:
+        "200":
+          description: Getting income trends successfuly
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: successful
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        totalAmout:
+                          type: integer
+                          format: int32
+                          example: 43555
+                        frequency:
+                          type: string
+                          enum: [weekly, monthly, yearly]
+                          example: monthly
+                        date:
+                          type: string
+                          example: "Jan 2023"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+  "/transactions/stats":
+    get:
+      description: Get the summery of all transaction for a particular period of time
+      tags: [Transaction]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/startParam"
+        - $ref: "#/components/parameters/endParam"
+      responses:
+        "200":
+          description: Getting transactions summery successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  stats:
+                    type: object
+                    properties:
+                      totalIncome:
+                        type: integer
+                        format: int32
+                        example: 43566
+                      totalExpense:
+                        type: integer
+                        format: int32
+                        example: 4000
+                      saving:
+                        type: integer
+                        format: int32
+                        example: 6000
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+
+  # Budget
+  "/budgets":
+    get:
+      description: This endpoint is for getting all the budgets
+      tags: [Budget]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/sortTypeParam"
+        - $ref: "#/components/parameters/sortByParam"
+        - $ref: "#/components/parameters/searchTermParam"
+      responses:
+        "200":
+          description: Getting all budgets successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Budget"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: "/budgets?page=1&limit=10&sort_type=desc&sort_by=createdAt"
+                      next:
+                        type: string
+                        format: url
+                        example: "/budgets?page=2&limit=10&sort_type=desc&sort_by=createdAt"
+                      prev:
+                        type: string
+                        format: url
+                        example: "/budgets?page=0&limit=10&sort_type=desc&sort_by=createdAt"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+    post:
+      description: This endpoints for creatin new budget
+      tags: [Budget]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Food budget
+                type:
+                  type: string
+                  enum: [weekly, monthly, yearly]
+                  example: monthly
+                description:
+                  type: string
+                  example: "Lorem Ipsum is simply dummy text of the printing and typesetting industry"
+                amount:
+                  type: integer
+                  format: int32
+                  example: 23000
+                date:
+                  type: string
+                  format: date-time
+                  example: "2023-09-14T19:01:14.785Z"
+                categoryId:
+                  type: string
+                  example: "64d268cdeef8c84bb18912db"
+      responses:
+        "201":
+          description: Budget created successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 201
+                  message:
+                    type: string
+                    example: Budget created successfullty
+                  data:
+                    $ref: "#/components/schemas/Budget"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: /budgets/64d268cdeef8c84bb18912db
+                      allBudgets:
+                        type: string
+                        example: "/budgets"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+  "/budgets/{id}":
+    get:
+      description: This endpoint for getting single budget
+      tags: [Budget]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      responses:
+        "200":
+          description: Getting single budget successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: "success"
+                  data:
+                    $ref: "#/components/schemas/Budget"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: /budgets/64d268cdeef8c84bb18912db
+                      allBudgets:
+                        type: string
+                        format: url
+                        example: /budgets
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+    patch:
+      description: This endpoints for updating budget
+      tags: [Budget]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Food budget
+                type:
+                  type: string
+                  enum: [weekly, monthly, yearly]
+                  example: monthly
+                description:
+                  type: string
+                  example: "Lorem Ipsum is simply dummy text of the printing and typesetting industry"
+                amount:
+                  type: integer
+                  format: int32
+                  example: 34000
+                date:
+                  type: string
+                  format: date-time
+                  example: "2023-09-14T19:01:14.785Z"
+                categoryId:
+                  type: string
+                  example: "64d268cdeef8c84bb18912db"
+      responses:
+        "200":
+          description: Budget updated successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    $ref: "#/components/schemas/Budget"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: /budgets/64d268cdeef8c84bb18912db
+                      allBudget:
+                        type: string
+                        format: url
+                        example: /budgets
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+    delete:
+      description: This endpoints for deleting budget
+      tags: [Budget]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      responses:
+        "204":
+          description: Budget deleted successfuly
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 204
+                  message:
+                    type: string
+                    example: Budget deleted successfully
+        "404":
+          $ref: "#/components/responses/404"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+  # Category
+  "/categories":
+    get:
+      description: This endpoints for getting all the categories
+      tags: [Category]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/sortTypeParam"
+        - $ref: "#/components/parameters/sortByParam"
+        - $ref: "#/components/parameters/searchTermParam"
+      responses:
+        "200":
+          description: Getting all categories successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/CategoryDto"
+                        - $ref: "#/components/schemas/Timestamp"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: "/categories?page=1&limit=10&sort_by=createdAt&sort_type=desc"
+                      next:
+                        type: string
+                        format: url
+                        example: "/categories?page=2&limit=10&sort_by=createdAt&sort_type=desc"
+                      prev:
+                        type: string
+                        format: url
+                        example: "/categories?page=0&limit=10&sort_by=createdAt&sort_type=desc"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+    post:
+      description: Create new category
+      tags: [Category]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Food Items
+                description:
+                  type: string
+                  example: Write description for this category
+              required:
+                - title
+                - description
+      responses:
+        "200":
+          description: Category created successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/CategoryDto"
+                      - $ref: "#/components/schemas/Timestamp"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: /categories/64d268cdeef8c84bb18912db
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+  "/categories/{id}":
+    get:
+      description: This endpoints for getting single category based on id
+      tags: [Category]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      responses:
+        "200":
+          description: Getting category successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/CategoryDto"
+                      - $ref: "#/components/schemas/Timestamp"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: /categories/64d268cdeef8c84bb18912db
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+    put:
+      description: This endpoints for updating category
+      tags: [Category]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: 64d268cdeef8c84bb18912db
+                title:
+                  type: string
+                  example: Food items
+                description:
+                  type: string
+                  example: write some description of this category
+      responses:
+        "200":
+          description: Category updated successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    allOf:
+                      - $ref: "#/components/schemas/CategoryDto"
+                      - $ref: "#/components/schemas/Timestamp"
+
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: /categories/64d268cdeef8c84bb18912db
+                      allBudget:
+                        type: string
+                        format: url
+                        example: /categories
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+    delete:
+      description: This endpoints for deleting category
+      tags: [Category]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      responses:
+        "204":
+          description: Category deleted successfuly
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 204
+                  message:
+                    type: string
+                    example: Category deleted successfully
+        "404":
+          $ref: "#/components/responses/404"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+  # Goal
+  "/goals":
+    post:
+      description: This endpoints is for creating new goal
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Update PC
+                description:
+                  type: string
+                  example: I want to update my pc. This is my goal
+                targetAmount:
+                  type: integer
+                  format: int32
+                  example: 30000
+                currentProgress:
+                  type: integer
+                  format: int32
+                  example: 5000
+                targetDate:
+                  type: string
+                  format: date-time
+                  example: "2023-09-14T19:01:14.785Z"
+              required: [title, targetAmount, currentProgress, targetDate]
+      responses:
+        "201":
+          description: New goal created successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 201
+                  message:
+                    type: string
+                    example: Goal created successfully
+                  data:
+                    $ref: "#/components/schemas/Goal"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: "/goals/64d268cdeef8c84bb18912db"
+                      allGoals:
+                        type: string
+                        format: url
+                        example: /goals
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+    get:
+      description: This endpoints for getting all goals
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/pageParam"
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/sortByParam"
+        - $ref: "#/components/parameters/sortTypeParam"
+        - $ref: "#/components/parameters/searchTermParam"
+      responses:
+        "200":
+          description: Getting all goals successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Goal"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: "/goals?page=1&limit=10&sort_by=createdAt&sort_type=desc"
+                      next:
+                        type: string
+                        format: url
+                        example: "/goals?page=2&limit=10&sort_by=createdAt&sort_type=desc"
+                      prev:
+                        type: string
+                        format: url
+                        example: "/goals?page=0&limit=10&sort_by=createdAt&sort_type=desc"
+                  pagination:
+                    $ref: "#/components/schemas/Pagination"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+  "/goals/{id}":
+    get:
+      description: Getting single goals based on id
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      responses:
+        "200":
+          description: Get the goal successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    $ref: "#/components/schemas/Goal"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: /goals/64d268cdeef8c84bb18912db
+                      allGoals:
+                        type: string
+                        format: url
+                        example: /goals
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+    put:
+      description: This endpoints for updating goal
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: 64d268cdeef8c84bb18912db
+                title:
+                  type: string
+                  example: Update PC
+                description:
+                  type: string
+                  example: I want to update my pc.
+                targetAmount:
+                  type: integer
+                  format: int32
+                  example: 43000
+                targetDate:
+                  type: string
+                  format: date-time
+                  example: "2023-09-14T19:01:14.785Z"
+      responses:
+        "200":
+          description: Updating goals successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    $ref: "#/components/schemas/Goal"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: /goals/64d268cdeef8c84bb18912db
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+    delete:
+      description: This endpoints for deleting goal
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      responses:
+        "204":
+          description: Goal deleted successfuly
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 204
+                  message:
+                    type: string
+                    example: Goal deleted successfully
+        "404":
+          $ref: "#/components/responses/404"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
+  "/goals/{id}/progress":
+    patch:
+      description: This endpoints for updating goal's current progress
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: integer
+                  format: int32
+                  example: 4000
+              required: [amount]
+      responses:
+        "200":
+          description: Goal's progress updated successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    $ref: "#/components/schemas/Goal"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: /goals/64d268cdeef8c84bb18912db
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+  "/goals/{id}/status":
+    patch:
+      description: This endpoints for updating goal's current progress
+      tags: [Goal]
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [pending, fulfilled, failed]
+                  example: pending
+              required: [status]
+      responses:
+        "200":
+          description: Goal's progress updated successfully
+          content:
+            "application/json":
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    example: success
+                  data:
+                    $ref: "#/components/schemas/Goal"
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: /goals/64d268cdeef8c84bb18912db
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: "64d268cdeef8c84bb18912db"
+            firstName:
+              type: string
+              example: Jhon
+            lastName:
+              type: string
+              example: Doe
+            email:
+              type: string
+              format: email
+              example: example@gmail.com
+            avatar:
+              type: string
+              format: url
+              example: http://example.jpg
+        - $ref: "#/components/schemas/Timestamp"
+    Transaction:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: "64d268cdeef8c84bb18912db"
+            title:
+              type: string
+              example: Home rent
+            description:
+              type: string
+              example: "Lorem Ipsum is simply dummy text of the printing and typesetting industry"
+            amount:
+              type: integer
+              format: int32
+              example: 6700
+            date:
+              type: string
+              format: date-time
+              example: "2023-09-14T19:01:14.785Z"
+            transactionType:
+              type: string
+              enum: [income, expense]
+              example: expense
+            category:
+              $ref: "#/components/schemas/CategoryDto"
+        - $ref: "#/components/schemas/Timestamp"
+    Budget:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: "64d268cdeef8c84bb18912db"
+            budgetType:
+              type: string
+              enum: [weekly, monthly, yearly]
+              example: monthly
+            description:
+              type: string
+              example: "Lorem Ipsum is simply dummy text of the printing and typesetting industry"
+            amount:
+              type: integer
+              format: int32
+              example: 3400
+            date:
+              type: string
+              format: date-time
+              example: "2023-09-14T19:01:14.785Z"
+            category:
+              $ref: "#/components/schemas/CategoryDto"
+        - $ref: "#/components/schemas/Timestamp"
+    Goal:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              example: "64d268cdeef8c84bb18912db"
+            title:
+              type: string
+              example: Update PC
+            description:
+              type: string
+              example: I want to update my pc
+            targetUpdate:
+              type: integer
+              format: int32
+              example: 45000
+            currentProgress:
+              type: integer
+              format: int32
+              example: 4000
+            targetDate:
+              type: string
+              format: date-time
+              example: "2023-09-14T19:01:14.785Z"
+            status:
+              type: string
+              enum: [pending, fulfilled, failed]
+              example: pending
+        - $ref: "#/components/schemas/Timestamp"
+
+    UpdateTransactionDto:
+      allOf:
+        - type: object
+          properties:
+            code:
+              type: integer
+              format: int32
+              example: 200
+            message:
+              type: string
+              example: Transaction updated successfully
+            data:
+              $ref: "#/components/schemas/Transaction"
+            links:
+              type: object
+              properties:
+                self:
+                  type: string
+                  format: url
+                  example: "/transactions/64d268cdeef8c84bb18912db"
+                all_transactions:
+                  type: string
+                  format: url
+                  example: /transactions
+    CategoryDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "64d268cdeef8c84bb18912db"
+        title:
+          type: string
+          example: food items
+        description:
+          type: string
+          example: "Lorem Ipsum is simply dummy text of the printing and typesetting industry"
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+          example: 5
+        limit:
+          type: integer
+          format: int32
+          example: 10
+        next:
+          type: integer
+          format: int32
+          example: 3
+        prev:
+          type: integer
+          format: int32
+          example: 4
+        totalPage:
+          type: integer
+          format: int32
+          example: 100
+        totalItems:
+          type: integer
+          format: int32
+          example: 1500
+      required: [page, limit, totalPage, totalItems]
+
+    Timestamp:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [createdAt, updatedAt]
+
+  responses:
+    "500":
+      description: Internal server error
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 500
+              error:
+                type: string
+                example: Internal server error
+              message:
+                type: string
+                example: We are srry for the inconvenience. Please try again later.
+    "400":
+      description: Bad Request
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 400
+              error:
+                type: string
+                example: Bad Request
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      example: username
+                    message:
+                      type: string
+                      example: invalid username
+                    in:
+                      type: string
+                      enum: [body, query]
+                      example: body
+    "401":
+      description: Unauthorized
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 401
+              error:
+                type: string
+                example: auathorized
+              message:
+                type: string
+                example: you don't have the right permission
+    "404":
+      description: Resource not found
+      content:
+        "application/json":
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 404
+              error:
+                type: string
+                example: Not Found
+              message:
+                type: string
+                example: Request resorces not found
+
+  parameters:
+    pageParam:
+      in: query
+      name: page
+      description: Current page number
+      schema:
+        type: integer
+        format: int32
+        example: 10
+    limitParam:
+      in: query
+      name: limit
+      description: Maximum number of items to be retrun
+      schema:
+        type: integer
+        format: int32
+        example: 20
+    sortTypeParam:
+      in: query
+      name: order
+      description: Type of sort (asc or desc)
+      schema:
+        type: string
+        enum: [asc, desc]
+        example: desc
+    sortByParam:
+      in: query
+      name: sort
+      description: Sort key
+      schema:
+        type: string
+        example: createdAt
+    searchTermParam:
+      in: query
+      name: search
+      description: Search term for searching transactions
+      schema:
+        type: string
+        example: rent
+    transactionTypeParam:
+      in: query
+      name: transactionType
+      description: Get transactions based on type ( income or expense)
+      schema:
+        type: string
+        enum: [income, expense]
+        example: income
+    idPathParam:
+      in: path
+      required: true
+      name: id
+      description: ID param for using in path
+      schema:
+        type: string
+        example: "64d268cdeef8c84bb18912db"
+    startParam:
+      in: query
+      name: start_date
+      schema:
+        type: string
+        format: date
+        example: "2023-09-14"
+    endParam:
+      in: query
+      name: end_date
+      schema:
+        type: string
+        format: date
+        example: "2023-09-14"
+    frequency:
+      in: query
+      name: frequency
+      schema:
+        type: string
+        enum: [week, month, year]
+        example: month
+    expandParam:
+      in: query
+      name: expand
+      schema:
+        type: string
+        example: category,user
+    selectParam:
+      in: query
+      name: select
+      schema:
+        type: string
+        example: title,description
