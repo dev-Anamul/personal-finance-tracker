@@ -84,10 +84,23 @@ docker-compose up -d
 4. **Add the following environment variables to the .env file:**
 
    ```bash
-    PORT=3000
-    MONGODB_URI=mongodb://localhost:27017/personal-finance-tracker
+    PORT=5455
+    MONGO_CONNECTION_STRING=mongodb://<USERNAME>:<PASSWORD>@<HOST>:<PORT>
+    MONGO_USERNAME=your-username
+    MONGO_PASSWORD=your-password
+    MONGO_HOST=localhost
+    MONGO_PORT=27017
+    MONGO_DB_NAME=personal-finance-tracker
     JWT_SECRET=your-secret
    ```
+
+   if you don't want to create a .env file, you can copy the env-example file. To do that, run the following command:
+
+   ```bash
+    cp env-example .env
+   ```
+
+   **Note:** Replace the values with your own values.
 
 5. **Start the Application:**
 
@@ -98,30 +111,39 @@ docker-compose up -d
 6. **Open the Application in Your Browser:**
 
    ```bash
-    http://localhost:3000
+    http://localhost:5455
    ```
 
 ## Usage
 
 ### Register
 
-To use the application, you need to register an account. Click on the **Register** button on the login page and fill out the registration form. Once you submit the form, you will be redirected to the login page. You can now log in to your account using your email and password.
+To use the application, you need to register an account. To register an account, you can use **/auth/signup** endpoint. You need to provide the following information to register an account:
+
+```json
+{
+  "firstName": "Jhon",
+  "lastName": "Doe",
+  "email": "example@gmail.com",
+  "password": "12345678"
+}
+```
 
 ### Add Transactions
 
-Once you log in to your account, you can start adding transactions. Click on the **Add Transaction** button on the dashboard page to add a new transaction. You can add transactions for both expenses and income sources. Make sure you select the correct transaction type before submitting the form.
+Once you log in to your account, you can now able to add, edit, delete, and view your transactions. Use the **/transactions** endpoints to perform transactions operations. you can also find the proper documentation which data you need to send to the server.
 
 ### Manage Budgets
 
-You can set up budgets for different spending categories to keep track of your spending. Click on the **Budgets** button on the dashboard page to manage your budgets. You can add, edit, and delete budgets from the budgets page.
+You can set up budgets for different spending categories to keep track of your spending. Use the **/budgets** endpoints to perform budgets operations. you can also find the proper documentation which data you need to send to the server.
 
-### View Reports
+### Manage Categories
 
-You can view your spending reports to gain insights into your spending patterns. Click on the **Reports** button on the dashboard page to view your reports. You can view your spending reports by category and by month.
+You can add, edit, delete, and view your categories. Use the **/categories** endpoints to perform categories operations. you can also find the proper documentation which data you need to send to the server.
 
-### Export Data
+### Manage Goals
 
-You can export your financial data for record-keeping or create backups to ensure the safety of your information. Click on the **Export Data** button on the dashboard page to export your data. You can export your data in CSV format.
+You can add, edit, delete, and view your goals. Use the **/goals** endpoints to perform goals operations. you can also find the proper documentation which data you need to send to the server.
 
 ## Data Security
 
@@ -134,3 +156,7 @@ We take data security very seriously. We use industry-standard security measures
 - **Salting:** We use a 16-byte salt to hash your passwords. We use the same salt to hash and verify your passwords.
 
 - **Authentication:** We use JSON Web Tokens (JWTs) to authenticate your requests. We use the HS256 algorithm to sign your JWTs. We use the same secret to sign and verify your JWTs.
+
+```
+
+```
