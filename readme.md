@@ -11,8 +11,6 @@ A robust and user-friendly personal finance tracking tool to assist you in prope
   - [Installation](#installation)
 - [Usage](#usage)
 - [Data Security](#data-security)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Introduction
 
