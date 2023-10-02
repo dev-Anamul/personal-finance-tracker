@@ -1,21 +1,15 @@
 /* eslint-disable no-undef */
-const mongoose = require('mongoose');
 const request = require('supertest');
 const app = require('../../../../app');
+const db = require('../../../../db/testDbConnection');
 require('dotenv').config();
 
-const mongoTestURI = process.env.MONGO_TEST_CONNECTION_STRING;
-const testDbName = process.env.MONGO_TEST_DB_NAME;
-
 beforeAll(async () => {
-    await mongoose.connect(`${mongoTestURI}`, {
-        dbName: testDbName,
-        authSource: 'admin',
-    });
+    await db.setUp();
 });
 
 afterAll(async () => {
-    await mongoose.connection.close();
+    await db.dropDatabase();
 });
 
 describe('PATCH api/v1/auth/update-password', () => {

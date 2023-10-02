@@ -1,7 +1,5 @@
-/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-undef */
-const mongoose = require('mongoose');
-const { User } = require('../../model');
+/* eslint-disable no-underscore-dangle */
 const {
     createUser,
     findUserByEmail,
@@ -10,24 +8,14 @@ const {
     updateUser,
     deleteUser,
 } = require('./index');
-
-require('dotenv').config();
-
-const mongoTestURI = process.env.MONGO_TEST_CONNECTION_STRING;
-const testDbName = process.env.MONGO_TEST_DB_NAME;
+const db = require('../../db/testDbConnection');
 
 beforeAll(async () => {
-    await mongoose.connect(`${mongoTestURI}`, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        dbName: testDbName,
-        authSource: 'admin',
-    });
+    await db.setUp();
 });
 
 afterAll(async () => {
-    // await mongoose.connection.dropDatabase();
-    await mongoose.connection.close();
+    await db.dropDatabase();
 });
 
 describe('User service', () => {
@@ -43,10 +31,6 @@ describe('User service', () => {
         });
 
         id = user._id;
-    });
-
-    afterAll(async () => {
-        await User.deleteMany({});
     });
 
     it('should create user', async () => {

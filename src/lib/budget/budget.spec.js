@@ -1,26 +1,15 @@
 /* eslint-disable no-undef */
-const mongoose = require('mongoose');
+const db = require('../../db/testDbConnection');
 
 const { Budget } = require('../../model');
 const { create, findOneById, removeOneById, updateOne } = require('./index');
 
-require('dotenv').config();
-
-const mongoTestURI = process.env.MONGO_TEST_CONNECTION_STRING;
-const testDbName = process.env.MONGO_TEST_DB_NAME;
-
 beforeAll(async () => {
-    await mongoose.connect(`${mongoTestURI}`, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        dbName: testDbName,
-        authSource: 'admin',
-    });
+    await db.setUp();
 });
 
 afterAll(async () => {
-    // await mongoose.connection.dropDatabase();
-    await mongoose.connection.close();
+    await db.dropDatabase();
 });
 
 describe('Budget service', () => {

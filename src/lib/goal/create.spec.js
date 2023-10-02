@@ -1,33 +1,19 @@
 /* eslint-disable no-undef */
-const mongoose = require('mongoose');
+
 const createGoal = require('./create');
 
-require('dotenv').config();
-
-const mongoTestURI = process.env.MONGO_TEST_CONNECTION_STRING;
-const testDbName = process.env.MONGO_TEST_DB_NAME;
+const db = require('../../db/testDbConnection');
 
 beforeAll(async () => {
-    await mongoose.connect(`${mongoTestURI}`, {
-        dbName: testDbName,
-        authSource: 'admin',
-    });
+    await db.setUp();
 });
 
 afterAll(async () => {
-    // await mongoose.connection.dropDatabase();
-    await mongoose.connection.close();
+    await db.dropDatabase();
 });
 
 afterEach(async () => {
-    const { collections } = mongoose.connection;
-
-    await Promise.all(
-        Object.keys(collections).map((key) => {
-            const collection = collections[key];
-            return collection.deleteMany();
-        })
-    );
+    await db.dropCollections();
 });
 
 describe('create goal', () => {

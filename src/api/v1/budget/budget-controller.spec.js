@@ -1,23 +1,15 @@
 /* eslint-disable no-undef */
-const mongoose = require('mongoose');
 const request = require('supertest');
+const db = require('../../../db/testDbConnection');
 const app = require('../../../app');
-
 require('dotenv').config();
 
-const mongoTestURI = process.env.MONGO_TEST_CONNECTION_STRING;
-const testDbName = process.env.MONGO_TEST_DB_NAME;
-
 beforeAll(async () => {
-    await mongoose.connect(`${mongoTestURI}`, {
-        dbName: testDbName,
-        authSource: 'admin',
-    });
+    await db.setUp();
 });
 
 afterAll(async () => {
-    // await mongoose.connection.dropDatabase();
-    await mongoose.connection.close();
+    await db.dropDatabase();
 });
 
 describe('Budget controller', () => {

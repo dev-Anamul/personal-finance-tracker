@@ -4,8 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test:dev": "cross-env NODE_ENV=test jest --watchAll",
-    "test": "cross-env NODE_ENV=test --runInBand jest --watchAll=false",
+    "test:dev": "cross-env NODE_ENV=test jest --runInBand --watchAll",
+    "test": "cross-env NODE_ENV=test  jest --runInBand --detectOpenHandles --forceExit",
     "test:coverage": "cross-env NODE_ENV=test jest --coverage",
     "start": "nodemon src/index.js",
     "lint": "eslint . --ext .js",
@@ -18,7 +18,6 @@
     "express": "^4.18.2",
     "express-openapi-validator": "^5.0.6",
     "jsonwebtoken": "^9.0.2",
-    "module-alias": "^2.2.3",
     "mongodb-memory-server": "^8.15.1",
     "mongoose": "^7.5.0",
     "morgan": "^1.10.0",

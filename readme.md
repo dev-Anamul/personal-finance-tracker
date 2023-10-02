@@ -1,7 +1,5 @@
 # Enhance Your Financial Journey with Our Personal Finance Tracking Application
 
-![Project Logo](project-logo.png) <!-- Include a logo or screenshot if applicable -->
-
 A robust and user-friendly personal finance tracking tool to assist you in properly managing your finances. It is Your digital financial compass and is made to lead you through the challenging landscape of managing your own finances. With our app, you can easily track your expenses, manage your budgets, and analyze your spending patterns.
 
 ## Table of Contents
@@ -108,7 +106,13 @@ docker-compose up -d
     yarn start
    ```
 
-6. **Open the Application in Your Browser:**
+6. **Test the Application:**
+
+   ```bash
+    yarn test
+   ```
+
+7. **Open the Application in Your Browser:**
 
    ```bash
     http://localhost:5455
@@ -156,7 +160,3 @@ We take data security very seriously. We use industry-standard security measures
 - **Salting:** We use a 16-byte salt to hash your passwords. We use the same salt to hash and verify your passwords.
 
 - **Authentication:** We use JSON Web Tokens (JWTs) to authenticate your requests. We use the HS256 algorithm to sign your JWTs. We use the same secret to sign and verify your JWTs.
-
-```
-
-```
